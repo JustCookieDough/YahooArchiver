@@ -50,4 +50,7 @@ def logErrors(index, filePath):
     file = open(filePath, "a")
     file.write(str(index) + "\n")
 
+def incrementDate(date): # this is gonna fucking suck to write
+    pass
+
 main()
