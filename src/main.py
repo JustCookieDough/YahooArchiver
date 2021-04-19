@@ -4,15 +4,19 @@ from bs4 import BeautifulSoup
 
 def main(): 
     print("loading config")
-    config = configparser.RawConfigParser()
-    configFilePath = "main.config"
-    config.read(configFilePath)
-    
-    startingIndex = int(config.get("main-config", "starting-index"))
-    date = config.get("main-config", "date").replace("/", "").replace("\"", "")
-    fileLocation = config.get("main-config", "file-location").replace("\"", "")
-    errorsLocation = config.get("main-config", "error-location").replace("\"", "")
-    runLength = int(config.get("main-config", "run-length"))
+    try:
+        config = configparser.RawConfigParser()
+        configFilePath = "main.config"
+        config.read(configFilePath)
+        
+        startingIndex = int(config.get("main-config", "starting-index"))
+        date = config.get("main-config", "date").replace("/", "")
+        fileLocation = config.get("main-config", "file-location")
+        errorsLocation = config.get("main-config", "error-location")
+        runLength = int(config.get("main-config", "run-length"))
+    except:
+        print("config load failed. halting")
+        return
 
     print("config loaded. beginning scraping")
     
