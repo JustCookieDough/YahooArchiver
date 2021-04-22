@@ -10,23 +10,28 @@ def main():
         config.read(configFilePath)
         
         startingIndex = int(config.get("main-config", "starting-index"))
-        date = config.get("main-config", "date").replace("/", "")
+        date = config.get("main-config", "start-date").replace("/", "")
         fileLocation = config.get("main-config", "file-location")
         errorsLocation = config.get("main-config", "error-location")
-        runLength = int(config.get("main-config", "run-length"))
+        numQuestionsPerDay = int(config.get("main-config", "num-questions-per-day"))
+        numToIncrement = int(config.get("main-config", "num-to-increment-date"))
     except:
         print("config load failed. halting")
         return
 
     print("config loaded. beginning scraping")
     
-    for i in range(runLength):
+    numSinceHit = 0
+    i = 0
+
+    while True:
         index = i + startingIndex
         url = "https://answers.yahoo.com/question/index?qid=10" + date + str(index).zfill(5) # the structure of a question id:
         print("testing " + url)                                                              # 10YYMMDDIIIII i is a 5 digit index
         if isValidPage(url):                                                                 # that seems to be sequential
-            print("valid page found at " + url)                                              # thats the old qid system the new one
-            try:                                                                             # is a little different but its the same vibe
+            numSinceHit = 0                                                                  # thats the old qid system the new one
+            print("valid page found at " + url)                                              # is a little different but its the same vibe
+            try:                                                                             
                 ans = Answer(url)
                 print("object generated, writing file")
                 ans.writeJsonFile("10" + date + str(index).zfill(5), fileLocation)
@@ -34,6 +39,20 @@ def main():
             except:
                 print("error while generating object. logging")
                 logErrors("10" + date + str(index).zfill(5), errorsLocation)
+        else:
+            numSinceHit += 1
+            print("too many misses. incrementing date")
+            if (numSinceHit == numToIncrement):
+                numSinceHit = 0
+                i = 0
+                date = incrementDate(date)
+        if i > numQuestionsPerDay:
+            print("reached end of scope. incrementing date")
+            numSinceHit = 0
+            i = 0
+            date = incrementDate(date)
+        i += 1
+
 
 
 def isValidPage(url):
