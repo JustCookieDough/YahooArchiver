@@ -5,6 +5,7 @@ class Answer:
 
     def __init__(self, url):
         page = requests.get(url)
+        self.url = url
 
         soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -41,6 +42,30 @@ class Answer:
 
         with open(filePath + fileName + ".json", "w") as outfile:
             json.dump(data, outfile)
+
+    def scroll(self, start, end):
+        qid = self.url.split("=")[1]
+
+        headers = {
+            'authority': 'answers.yahoo.com',
+            'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"',
+            'accept': 'application/json',
+            'sec-ch-ua-mobile': '?0',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36',
+            'content-type': 'application/json',
+            'origin': 'https://answers.yahoo.com',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            'referer': self.url,
+            'accept-language': 'en-US,en;q=0.9,es-CO;q=0.8,es;q=0.7',
+        }
+
+        data = '{"type":"CALL_RESERVICE","payload":{"qid":"' + qid + '","count":' + str(end) + ',"start":' + str(start) + ',"lang":"en-US","sortType":"RELEVANCE"},"reservice":{"name":"FETCH_QUESTION_ANSWERS_END","start":"FETCH_QUESTION_ANSWERS_START","state":"CREATED"},"kvPayload":{"key":"' + qid + '","kvActionPrefix":"KV/questionAnswers/"}}'
+
+        response = requests.put('https://answers.yahoo.com/_reservice_/', headers=headers, data=data)
+        print(response.content)
+        return response
 
             
     
