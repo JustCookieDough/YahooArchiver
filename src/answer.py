@@ -64,7 +64,11 @@ class Answer:
         data = '{"type":"CALL_RESERVICE","payload":{"qid":"' + qid + '","count":' + str(end) + ',"start":' + str(start) + ',"lang":"en-US","sortType":"RELEVANCE"},"reservice":{"name":"FETCH_QUESTION_ANSWERS_END","start":"FETCH_QUESTION_ANSWERS_START","state":"CREATED"},"kvPayload":{"key":"' + qid + '","kvActionPrefix":"KV/questionAnswers/"}}'
 
         response = requests.put('https://answers.yahoo.com/_reservice_/', headers=headers, data=data)
-        print(response.content)
-        return response
+
+        decodeJson = json.loads(response.content.decode('utf-8'))
+        return decodeJson
     
+    def addAnswersToAList(self, dict):
+        print("test")
+        
         
