@@ -27,6 +27,17 @@ class Answer:
                 aTitleText = aTitle.text.strip()
                 aBodyText = aBody.text.strip()
                 self.answers.append([aTitleText, aBodyText]) 
+        
+        #this scrolls and adds new answers until there arent any more to add
+        hasScroll = bool(soup.find("a", attrs={"class": "AnswersList__actionBtn___41DEf"})) # is this neccesary? thats gonna be a hard maybe
+        i = 0
+        while (hasScroll):
+            i += 1
+            numAnswers = self.scroll(i*10+1, (i+1)*10)
+            
+            if numAnswers < 10:
+                hasScroll = False
+            
 
     def __str__(self):
         return "Title: {}\nAuthor: {}\nQuestion Text: {}".format(self.title, self.author, self.questionText)
@@ -64,10 +75,10 @@ class Answer:
         data = '{"type":"CALL_RESERVICE","payload":{"qid":"' + qid + '","count":' + str(end) + ',"start":' + str(start) + ',"lang":"en-US","sortType":"RELEVANCE"},"reservice":{"name":"FETCH_QUESTION_ANSWERS_END","start":"FETCH_QUESTION_ANSWERS_START","state":"CREATED"},"kvPayload":{"key":"' + qid + '","kvActionPrefix":"KV/questionAnswers/"}}'
 
         response = requests.put('https://answers.yahoo.com/_reservice_/', headers=headers, data=data)
-        
+
         decodeJson = json.loads(response.content.decode('utf-8'))
         for answer in decodeJson["payload"]["answers"]:
             self.answers.append([answer["answerer"]["nickname"], answer["text"]])
-        return decodeJson
+        return decodeJson["payload"]["answerCount"] # this now returns how many answers it got. a little weird but it helps some other stuff work so its staying in
         
         
