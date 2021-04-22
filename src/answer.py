@@ -67,8 +67,5 @@ class Answer:
 
         decodeJson = json.loads(response.content.decode('utf-8'))
         return decodeJson
-    
-    def addAnswersToAList(self, dict):
-        print("test")
         
         
