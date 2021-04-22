@@ -53,5 +53,4 @@ def logErrors(index, filePath):
 def incrementDate(date): # this is gonna fucking suck to write
     pass
 
-ans = Answer("https://answers.yahoo.com/question/index?qid=20210418200035AAAKmv6")
-ans.scroll(11, 20)
+main()
